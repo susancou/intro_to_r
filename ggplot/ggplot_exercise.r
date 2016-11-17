@@ -3,12 +3,15 @@ library(data.table)
 library(reshape2)
 library(dplyr)
 
+load("ggplot/suicides.rdata")
 
 load("suicides.rdata")
 
 suicides$age <- as.factor(suicides$age)
 
 all_suicides <- copy(suicides)
+
+
 suicides <- suicides %>% 
   group_by(year, age, sex) %>% 
   mutate(deaths = sum(deaths))
@@ -16,6 +19,11 @@ suicides <- suicides %>%
 #  Make a line plot of suicides by age
 # (year on the x axis, deaths on the y axis, different line for each age).
 # facet by sex.
+
+line.by.age <- ggplot(suicides, aes(x=year, y=deaths, color=age)) +
+  geom_line(line = 2) +
+  facet_wrap(~sex, scales="free")
+
 
 
 ##extra credit####
@@ -30,4 +38,7 @@ one_state <- all_suicides[all_suicides$state=="Uttar Pradesh"] %>%
 
 
 
+one.state <- ggplot(suicides, aes(x=year, y=deaths, color=age)) +
+  geom_bar(position=stack, aes(fill=means), stat="identity") +
+  facet_wrap(~sex, ~means, scales="free")
 
